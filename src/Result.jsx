@@ -1,5 +1,9 @@
 export default function Result ({weatherData, temp, unit}) {
+  console.log(weatherData);
     return <>
+    <div className="location">
+          {weatherData.name.charAt(0).toUpperCase() + weatherData.name.slice(1)}
+        </div>
     <img
       src={`https://openweathermap.org/img/wn/${weatherData.icon}@2x.png`}
       alt="weather icon"

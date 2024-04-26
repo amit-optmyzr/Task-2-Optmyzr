@@ -1,30 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TiTick } from "react-icons/ti";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { fetchWeatherData } from "./fetchData";
 import Result from "./Result";
+import { convertToF } from './genericOps';
 
-export default function WeatherCard({ identifier, handleDelete, unit }) {
-  const [weatherData, setWeatherData] = useState({
-    max_temp: null,
-    min_temp: null,
-    temperature: null,
-    description: null,
-    icon: null,
-  });
+export default function WeatherCard({ identifier, handleDelete, unit, data, setWeatherData }) {
   const [cityVal, setCityVal] = useState("");
-  const [cityName, setCityName] = useState("");
   const [load, setLoad] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (cityName !== "") fetchWeatherData(cityName, setLoading, setLoad, setWeatherData);
-  }, [cityName]);
-  const convertToF = (tmp) => ((tmp - 273.15) * 9) / 5 + 32;
+  
+  console.log(data);
   let temp = {
-    now: weatherData.temperature,
-    max: weatherData.max_temp,
-    min: weatherData.min_temp,
+    now: data.temperature,
+    max: data.max_temp,
+    min: data.min_temp,
   };
   if (unit === "c") {
     temp.now = temp.now - 273.15;
@@ -48,7 +38,10 @@ export default function WeatherCard({ identifier, handleDelete, unit }) {
         />
         <button
           className="btn btn-success"
-          onClick={() => setCityName(cityVal)}
+          onClick={() => {
+            let id = data.id;
+            if (cityVal !== "") fetchWeatherData(id, cityVal, setLoading, setLoad, setWeatherData);
+          }}
         >
           <TiTick className="btn-icon" />
         </button>
@@ -60,14 +53,10 @@ export default function WeatherCard({ identifier, handleDelete, unit }) {
         </button>
       </div>
       <div className="result-section">
-        <div className="location">
-          {cityName.charAt(0).toUpperCase() + cityName.slice(1)}
-        </div>
         {loading && <>Loading...</>}
-        {!loading && cityName === "" && <>Enter any location..</>}
-        {!loading && cityName !== "" && !load && <>Data not found</>}
-        {!loading && cityName !== "" && load && (
-          <Result weatherData={weatherData} temp={temp} unit={unit} />
+        {!loading && !load &&  <>Searching...</>}
+        {!loading && data.name!==null && load && (
+          <Result weatherData={data} temp={temp} unit={unit} />
         )}
       </div>
     </div>

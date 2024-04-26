@@ -3,19 +3,27 @@ import WeatherCard from "./WeatherCard";
 import { TiPlus } from "react-icons/ti";
 
 export default function App() {
-  const [city, setCity] = useState([]);
+  const [weatherData, setWeatherData] = useState([]);
   const [unit, setUnit] = useState("c");
   const handleClick = () => {
-    setCity((prev) => {
+    setWeatherData((prev) => {
       const newId = Math.random();
-      return [...prev, newId];
+      return [...prev, {
+        id: newId,
+        name: null,
+        max_temp: null,
+        min_temp: null,
+        temperature: null,
+        description: null,
+        icon: null,
+      }];
     });
   };
   useEffect(()=>{
     handleClick();
   }, []);
   const handleDelete = (id) => {
-    setCity((prev) => prev.filter((cid) => cid !== id));
+    setWeatherData((prev) => prev.filter((cid) => cid.id !== id));
   };
   return (
     <main className="main">
@@ -27,10 +35,10 @@ export default function App() {
         <option value="k">Kelvin</option>
       </select>
       <div className="cards">
-        {city.length===0 && <div style={{marginTop: '10px'}}>Add a card using the add icon in the right-bottom corner..</div>}
-        {city.length!==0 && city.map((id, index) => {
+        {weatherData.length===0 && <div style={{marginTop: '10px'}}>Add a card using the add icon in the right-bottom corner..</div>}
+        {weatherData.length!==0 && weatherData.map((data, index) => {
           return (
-            <WeatherCard key={id} handleDelete={handleDelete} identifier={id} unit={unit} />
+            <WeatherCard key={data.id} handleDelete={handleDelete} identifier={data.id} unit={unit} data={data} setWeatherData={setWeatherData} />
           );
         })}
         <button className="add-btn" onClick={handleClick}><TiPlus /></button>
